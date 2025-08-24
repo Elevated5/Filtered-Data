@@ -1,21 +1,46 @@
 require('dotenv').config()
 require('express-async-errors')
+const path = require('path');
 const notFoundMiddleware = require('./middleware/not-found')
 const errorHandleMiddleware = require('./middleware/error-handler')
 const connectDB = require('./db/connect')
-const productsRouter = require('./routes/products')
+const userRouter = require('./routes/users')
 const express = require('express');
 const app = express();
 
+// Middleware (simplified)
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'templates')));
 
-app.use(express.json())
-
+// Routes to display HTML files
 app.get('/', (req, res) => {
-    res.send(`<h1>Store API</h1><a href="/api/v1/products">Products Route</a>`)
-})
+    res.sendFile(path.join(__dirname, 'templates', 'index.html'));
+});
 
-app.use(`/api/v1/products`, productsRouter)
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'templates', 'about.html'));
+});
 
+app.get('/blog', (req, res) => {
+    res.sendFile(path.join(__dirname, 'templates', 'blog.html'));
+});
+
+app.get('/contact', (req, res) => {
+    res.sendFile(path.join(__dirname, 'templates', 'contact.html'));
+});
+
+app.get('/get-certified', (req, res) => {
+    res.sendFile(path.join(__dirname, 'templates', 'get-certified.html'));
+});
+
+app.get('/verify-certificate', (req, res) => {
+    res.sendFile(path.join(__dirname, 'templates', 'verify-certificate.html'));
+});
+
+// API routes
+app.use('/api/v1/ff/user/verify', userRouter)
+
+// Error handling middleware
 app.use(notFoundMiddleware)
 app.use(errorHandleMiddleware)
 
